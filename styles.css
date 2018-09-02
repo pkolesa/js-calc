@@ -1,0 +1,62 @@
+
+
+body {
+    
+    margin-left: 5em;
+    font-family: Arial, Helvetica, sans-serif;
+
+}
+
+#calc {
+    border: 1px solid lightblue;
+    padding: 1em;
+}
+
+table {
+    border-spacing: 5px;
+}
+
+td {
+    border:1px solid lightgrey;
+    background-color: gainsboro;
+    width: 4rem;
+    height: 4rem;
+    text-align: center;
+}
+
+.button {
+    
+}
+
+#result {
+    padding: 10px;
+    font-weight: bold;
+    font-size: 2em;
+    border: 1px;
+    background-color: gray;
+    text-align: right;
+}
+
+#previous {
+    padding: 5px;
+    font-size: 0.7em;
+    background-color: white;
+    border: 1px;
+    text-align: right;
+}
+
+.func {
+    background-color: lightsteelblue;
+}
+
+/* inversion button */
+#inv {
+    background-color: gold;
+    color: darkred;
+}
+
+
+/* disabled buttons */
+.dis {
+    color: lightgray !important;
+}

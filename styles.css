@@ -24,8 +24,14 @@ td {
     text-align: center;
 }
 
+
 .button {
-    
+    box-sizing: border-box;
+}
+
+
+.button:hover {
+    border: 2px solid;
 }
 
 #result {
@@ -59,4 +65,9 @@ td {
 /* disabled buttons */
 .dis {
     color: lightgray !important;
+    
+}
+
+.dis:hover {
+    border: 1px solid !important;
 }

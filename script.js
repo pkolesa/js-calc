@@ -6,7 +6,7 @@ var displayVal = 0;
 /* assign actions to buttons and init calc */
 
 {
-
+    initBackspace();
     initClearEverything();
     initDigits();
 
@@ -23,6 +23,10 @@ var displayVal = 0;
             //console.log("Adding listener to " + num);
             digitButtons[i].addEventListener("click", function () { pressed(num); });
         }
+    }
+
+    function initBackspace() {
+        document.getElementById("backspace").addEventListener("click", pushedBackspace);
     }
 
     function initClearEverything() {
@@ -47,6 +51,11 @@ function pushedCE() {
     // clear display
     displayVal = 0;
     result = 0;
+    display();
+}
+
+function pushedBackspace() {
+    displayVal = displayVal.slice(0, -1);
     display();
 }
 

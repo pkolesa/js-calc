@@ -3,25 +3,33 @@ var result = 0;
 var displayVal = 0;
 
 
-/* assign actions to elements */
+/* assign actions to buttons and init calc */
 
 {
 
+    initClearEverything();
+    initDigits();
+
+
+
+    display();
+
+    function initDigits() {
+        let digitButtons = document.getElementsByClassName("digit");
+        let len = digitButtons.length;
+        //console.log("A");
+        for (i = 0; i < len; i++) {
+            let num = digitButtons[i].textContent;
+            //console.log("Adding listener to " + num);
+            digitButtons[i].addEventListener("click", function () { pressed(num); });
+        }
+    }
+
+    function initClearEverything() {
+        document.getElementById("ce").addEventListener("click", pushedCE);
+    }
+
 }
-let digitButtons = document.getElementsByClassName("digit");
-let len = digitButtons.length;
-
-//console.log("A");
-
-for(i = 0; i < len; i++) {
-    let num = digitButtons[i].textContent;
-    //console.log("Adding listener to " + num);
-    digitButtons[i].addEventListener("click", function() {pressed(num)});
-}
-
-
-
-display();
 
 function pressed(num) {
 // let num = document.getElementById("7").textContent;
@@ -33,6 +41,13 @@ function pressed(num) {
     displayVal += num;
     display();
 
+}
+
+function pushedCE() {
+    // clear display
+    displayVal = 0;
+    result = 0;
+    display();
 }
 
 function display() {

@@ -63,8 +63,7 @@ function pushedBackspace() {
 
 function display() {
     let formatedValue = format(parseInt(displayVal))
-                        + decimalSeparator(
-                        getDecimalPart(displayVal)); // decimal part is not formaterd
+                        + getDecimalPart(displayVal); // decimal part is not formaterd
 
     document.getElementById("result").textContent = formatedValue;
 } 
@@ -107,13 +106,20 @@ function decimalSeparator(intString) {
 
 /**
  * 
- * @param {*} number If number has any decimal part, it is returned. If not, empty string is returned 
+ * @param {*} number If number has any decimal part, it is returned. If not, empty string is returned. 
+ * If number contais decimal point, but has no decimal part, only that decimal point is retunred (this scenario happens 
+ * user pushes . button in UI). 
  */
 function getDecimalPart(number) {
     let decimalPart = (number + '').split(DECIMAL_SEPARATOR)[1]; // 2nd chunk is decimal part, if present
     if(decimalPart === undefined) {
-        return '';
+        // if number contais decimal point, return it
+        if(('' + number).indexOf(DECIMAL_SEPARATOR) > -1) {
+            return DECIMAL_SEPARATOR;
+        } else {
+            return '';
+        }
     } else {
-        return decimalPart;
+        return DECIMAL_SEPARATOR + decimalPart;
     }
 }

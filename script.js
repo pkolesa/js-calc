@@ -57,7 +57,10 @@ function pushedCE() {
 }
 
 function pushedBackspace() {
-    displayVal = displayVal.slice(0, -1);
+    displayVal = ('' +  displayVal).slice(0, -1);
+    if(displayVal.length <= 0) {
+        displayVal = 0;
+    }
     display();
 }
 

@@ -1,15 +1,21 @@
 /* global vars */
 var result = 0;
 var displayVal = 0;
+var stack = [];
 
 const THOUSAND_SEPARATOR = ','
 const DECIMAL_SEPARATOR = "."
 
+/* DEFINE OPERATIONS */
+
+const ADD = {name: "+", operation: function(a,b) { return parseFloat(a) + parseFloat(b); }};
+
+
 /* assign actions to buttons and init calc */
 
 {
-    initBackspace();
-    initClearEverything();
+    initClear();
+    initBasicOperations();
     initDigits();
 
 
@@ -27,20 +33,20 @@ const DECIMAL_SEPARATOR = "."
         }
     }
 
-    function initBackspace() {
+    function initClear() {
+        document.getElementById("ce").addEventListener("click", pushedCE);
         document.getElementById("backspace").addEventListener("click", pushedBackspace);
     }
 
-    function initClearEverything() {
-        document.getElementById("ce").addEventListener("click", pushedCE);
+    function initBasicOperations() {
+        document.getElementById("plus").addEventListener("click", function() { processOp(ADD); });
+        document.getElementById("result").addEventListener("click", pushedResult);
     }
 
 }
 
 function pressed(num) {
-// let num = document.getElementById("7").textContent;
-    //alert("Hello World! " + num);
-    if(displayVal === 0) {
+    if(displayVal === 0 || rewrite === true) {
         displayVal = "";
     } 
    
@@ -52,11 +58,13 @@ function pressed(num) {
 function pushedCE() {
     // clear display
     displayVal = 0;
+    rewrite = false;
     result = 0;
     display();
 }
 
 function pushedBackspace() {
+    if(rewrite === ture) {return;}
     displayVal = ('' +  displayVal).slice(0, -1);
     if(displayVal.length <= 0) {
         displayVal = 0;
@@ -68,7 +76,7 @@ function display() {
     let formatedValue = format(parseInt(displayVal))
                         + getDecimalPart(displayVal); // decimal part is not formaterd
 
-    document.getElementById("result").textContent = formatedValue;
+    document.getElementById("display").textContent = formatedValue;
 } 
 
 
@@ -125,4 +133,30 @@ function getDecimalPart(number) {
     } else {
         return DECIMAL_SEPARATOR + decimalPart;
     }
+}
+
+function pushedResult() {
+    if(stack.length == 0) { return }
+    stack.push(displayVal);
+    evaluate();
+    displayVal = stack.pop();
+    display();
+}
+
+function processOp(operation) {
+    stack.push(displayVal);
+    stack.push(operation);
+    rewrite = true;
+}
+
+function evaluate() {
+
+    while(stack.length > 1) {
+    secondOp = stack.pop();
+    op = stack.pop();
+    firstOp = stack.pop();
+
+    stack.push(op.operation(firstOp, secondOp));
+    }
+
 }

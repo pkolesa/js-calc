@@ -2,6 +2,7 @@
 var result = 0;
 var displayVal = 0;
 var stack = [];
+var rewrite = true;
 
 const THOUSAND_SEPARATOR = ','
 const DECIMAL_SEPARATOR = "."
@@ -9,6 +10,9 @@ const DECIMAL_SEPARATOR = "."
 /* DEFINE OPERATIONS */
 
 const ADD = {name: "+", operation: function(a,b) { return parseFloat(a) + parseFloat(b); }};
+const SUBTRACT = {name: "-", operation: function(a,b) { return parseFloat(a) - parseFloat(b); }};
+const MULTIPLY = {name: "*", operation: function(a,b) { return parseFloat(a) * parseFloat(b); }};
+const DIVIDE = {name: "/", operation: function(a,b) { return parseFloat(a) / parseFloat(b); }};
 
 
 /* assign actions to buttons and init calc */
@@ -25,10 +29,8 @@ const ADD = {name: "+", operation: function(a,b) { return parseFloat(a) + parseF
     function initDigits() {
         let digitButtons = document.getElementsByClassName("digit");
         let len = digitButtons.length;
-        //console.log("A");
         for (i = 0; i < len; i++) {
             let num = digitButtons[i].textContent;
-            //console.log("Adding listener to " + num);
             digitButtons[i].addEventListener("click", function () { pressed(num); });
         }
     }
@@ -40,16 +42,21 @@ const ADD = {name: "+", operation: function(a,b) { return parseFloat(a) + parseF
 
     function initBasicOperations() {
         document.getElementById("plus").addEventListener("click", function() { processOp(ADD); });
+        document.getElementById("minus").addEventListener("click", function() { processOp(SUBTRACT); });
+        document.getElementById("times").addEventListener("click", function() { processOp(MULTIPLY); });
+        document.getElementById("divide").addEventListener("click", function() { processOp(DIVIDE); });
         document.getElementById("result").addEventListener("click", pushedResult);
     }
 
 }
 
 function pressed(num) {
-    if(displayVal === 0 || rewrite === true) {
+
+    if(rewrite === true) {
         displayVal = "";
     } 
-   
+    rewrite = false;
+
     displayVal += num;
     display();
 
@@ -64,7 +71,7 @@ function pushedCE() {
 }
 
 function pushedBackspace() {
-    if(rewrite === ture) {return;}
+    if(rewrite === true) {return;}
     displayVal = ('' +  displayVal).slice(0, -1);
     if(displayVal.length <= 0) {
         displayVal = 0;
@@ -73,7 +80,10 @@ function pushedBackspace() {
 }
 
 function display() {
-    let formatedValue = format(parseInt(displayVal))
+    let integerPart = parseInt(displayVal, 10);
+    let formatedIntegerPart = format(integerPart);
+
+    let formatedValue = formatedIntegerPart
                         + getDecimalPart(displayVal); // decimal part is not formaterd
 
     document.getElementById("display").textContent = formatedValue;
@@ -123,7 +133,7 @@ function decimalSeparator(intString) {
  */
 function getDecimalPart(number) {
     let decimalPart = (number + '').split(DECIMAL_SEPARATOR)[1]; // 2nd chunk is decimal part, if present
-    if(decimalPart === undefined) {
+    if(decimalPart === undefined || decimalPart === "") {
         // if number contais decimal point, return it
         if(('' + number).indexOf(DECIMAL_SEPARATOR) > -1) {
             return DECIMAL_SEPARATOR;

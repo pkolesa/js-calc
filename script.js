@@ -9,10 +9,10 @@ const DECIMAL_SEPARATOR = "."
 
 /* DEFINE OPERATIONS */
 
-const ADD = {name: "+", operation: function(a,b) { return parseFloat(a) + parseFloat(b); }};
-const SUBTRACT = {name: "-", operation: function(a,b) { return parseFloat(a) - parseFloat(b); }};
-const MULTIPLY = {name: "*", operation: function(a,b) { return parseFloat(a) * parseFloat(b); }};
-const DIVIDE = {name: "/", operation: function(a,b) { return parseFloat(a) / parseFloat(b); }};
+const ADD = {name: "+", priority: 1, operation: function(a,b) { return parseFloat(a) + parseFloat(b); }};
+const SUBTRACT = {name: "-", priority: 1, operation: function(a,b) { return parseFloat(a) - parseFloat(b); }};
+const MULTIPLY = {name: "*", priority: 2, operation: function(a,b) { return parseFloat(a) * parseFloat(b); }};
+const DIVIDE = {name: "/", priority: 2, operation: function(a,b) { return parseFloat(a) / parseFloat(b); }};
 
 
 /* assign actions to buttons and init calc */
@@ -151,22 +151,58 @@ function pushedResult() {
     evaluate();
     displayVal = stack.pop();
     display();
+    rewrite = true;
 }
 
 function processOp(operation) {
+    /* invariant - there is always at most one operation for each priority. 
+     * Priorities always get higher toward the end of the stack.
+     * For example: 2 + 5 * 3
+     */
+
+
+    // if operation already on stack has higher or equal priority then current operation, evaluate it 
     stack.push(displayVal);
+    
+    evaluateIfPriorityAtLeast(operation.priority);
+
     stack.push(operation);
     rewrite = true;
+}
+
+/**
+ * If the previous operation on the stack has equal or higher priority, evaluate it. 
+ * @param {integer} operationPriority 
+ */
+function evaluateIfPriorityAtLeast(operationPriority) {
+    if(stack.length < 3) { return; } // not enough operands on the stack
+
+    // stack structure is (from lower indexes to higher) : ..., operand1, operation, operand2 <- this is top of the stack
+    op = stack[stack.length - 2]; 
+    // TODO make op a type and check via instanceof
+    pri2 = op.priority;
+    if(pri2 === undefined) {
+        console.error('Unexpected state of stack of operations: ' + stack);
+        return;
+    }
+
+    if(pri2 >= operationPriority) {
+        evalOneOperation();
+        evaluateIfPriorityAtLeast(operationPriority);
+    }
 }
 
 function evaluate() {
 
     while(stack.length > 1) {
+        evalOneOperation();
+    }
+
+}
+
+function evalOneOperation() {
     secondOp = stack.pop();
     op = stack.pop();
     firstOp = stack.pop();
-
     stack.push(op.operation(firstOp, secondOp));
-    }
-
 }
